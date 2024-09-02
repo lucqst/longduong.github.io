@@ -6,4 +6,4 @@ categories: jekyll update
 ---
 Project 1: 
 
-![Image 1](project1/output/out_cathedral.jpg.jpg)
+![Image 1](/assets/project1/output/out_cathedral.jpg.jpg)
