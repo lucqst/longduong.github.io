@@ -1,7 +1,9 @@
 ---
 layout: post
-title:  "Welcome to Jekyll!"
+title:  "Project 1: Color"
 date:   2024-09-01 16:30:10 -0700
 categories: jekyll update
 ---
 Project 1: 
+
+![Image 1](_posts/project1/output/out_cathedral.jpg.jpg)
