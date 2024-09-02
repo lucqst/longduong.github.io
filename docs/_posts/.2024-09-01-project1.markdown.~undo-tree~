@@ -1,5 +1,5 @@
 (undo-tree-save-format-version . 1)
-"a650bc5f54a3d41d71f87b68ca3ba2c11a68c9de"
+"b182c4c32bcb877494516cae21ddd7f3f61d336b"
 [nil nil nil nil (26325 3653 795446 229000) 0 nil]
 ([nil nil ((nil rear-nonsticky nil 111 . 112) (nil fontified nil 2 . 112) (2 . 112) 1 (t 26325 3544 325525 432000)) nil (26325 3653 795445 487000) 0 nil])
 ([nil nil ((#("P" 0 1 (wrap-prefix "  " fontified t)) . 1) (undo-tree-id3 . -1) (undo-tree-id4 . -1) (undo-tree-id5 . -1)) nil (26325 3653 795443 473000) 0 nil])
@@ -18,5 +18,6 @@
 ([nil nil ((#("docs/_posts/" 0 12 (face markdown-url-face font-lock-multiline t mouse-face markdown-highlight-face invisible markdown-markup keymap (keymap (mouse-2 . markdown-follow-thing-at-point) (follow-link . mouse-face)) wrap-prefix "  " fontified t)) . 133) (undo-tree-id106 . -11) (undo-tree-id107 . -11) (undo-tree-id108 . -12) (undo-tree-id109 . -11) (undo-tree-id110 . -4) (undo-tree-id111 . -4) (undo-tree-id112 . -4) (undo-tree-id113 . -6) (undo-tree-id114 . -4) (undo-tree-id115 . -11) (undo-tree-id116 . -6) (undo-tree-id117 . -11) 144 (t 26325 4832 252519 687000)) nil (26325 4935 42157 831000) 0 nil])
 ([nil nil ((133 . 140) (#("asserts" 0 7 (face markdown-url-face font-lock-multiline t mouse-face markdown-highlight-face invisible markdown-markup keymap (keymap (mouse-2 . markdown-follow-thing-at-point) (follow-link . mouse-face)) wrap-prefix "  " fontified t)) . -133) (undo-tree-id118 . -7) (undo-tree-id119 . -1) (undo-tree-id120 . -1) (undo-tree-id121 . -2) (undo-tree-id122 . -1) (undo-tree-id123 . -3) (undo-tree-id124 . -2) (undo-tree-id125 . -4) (undo-tree-id126 . -3) (undo-tree-id127 . -5) (undo-tree-id128 . -4) (undo-tree-id129 . -6) (undo-tree-id130 . -5) (undo-tree-id131 . -7) (undo-tree-id132 . -6) (undo-tree-id133 . -7) 140 (133 . 140) (t 26325 4935 51557 61000)) nil (26325 5184 367006 147000) 0 nil])
 ([nil nil ((133 . 134)) nil (26325 5184 366980 639000) 0 nil])
-([nil current ((#("/" 0 1 (wrap-prefix "  " face markdown-url-face font-lock-multiline t mouse-face markdown-highlight-face invisible markdown-markup keymap (keymap (mouse-2 . markdown-follow-thing-at-point) (follow-link . mouse-face)) fontified t)) . 133) (t 26325 5184 377073 118000)) nil (26325 5387 319972 488000) 0 nil])
+([nil nil ((#("/" 0 1 (wrap-prefix "  " face markdown-url-face font-lock-multiline t mouse-face markdown-highlight-face invisible markdown-markup keymap (keymap (mouse-2 . markdown-follow-thing-at-point) (follow-link . mouse-face)) fontified t)) . 133) (t 26325 5184 377073 118000)) nil (26325 5387 319972 488000) 0 nil])
+([nil current ((133 . 136) (t 26325 5387 330121 180000)) nil (26325 5577 340448 536000) 0 nil])
 nil
