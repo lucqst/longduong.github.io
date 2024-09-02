@@ -23,7 +23,7 @@ email: lucast@berkeley.edu
 description: >- # this means to ignore newlines until "baseurl:"
   CS180 project log
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://lucqst.github.io/longduong.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://lucqst.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb
 github_username:  lucqst
 
