@@ -71,20 +71,20 @@ What remains is to crop the picture at these outlying columns. The first approac
 
 Here are all the pictures (without autocrop) and their displacements
 
-| **Picture**                                                                          | **Red displacement** | **Green displacement** |
-|--------------------------------------------------------------------------------------|----------------------|------------------------|
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_cathedral.jpg.jpg )         | (12, 3)              | (5, 2)                 |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_church.tif.jpg )            | (58, -4)             | (25, 4)                |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_emir.tif.jpg )              | (106, 42)            | (49, 24)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_harvesters.tif.jpg )        | (123,13)             | (60, 17)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_icon.tif.jpg )              | (89, 23)             | (40, 17)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_melons.tif.jpg )            | (177, 13)            | (80, 10)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_monastery.jpg.jpg )         | (3, 2)               | (-3, 2)                |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_onion_church.tif.jpg )      | (108, 36)            | (51, 27)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_sculpture.tif.jpg )         | (140, -27)           | (33, -11)              |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_self_portrait.tif.jpg )     | (175, 37)            | (79, 30)               |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_tolbolsk.jpg.jpg )          | (7, 3)               | (3, 3)                 |
-| ![emir_good]({{site.baseurl}}/assets/project1/output/out_train.tif.jpg )             | (86, 33)             | (42, 8)                |
+| **Picture**                                                                      | **Red displacement** | **Green displacement** |
+|----------------------------------------------------------------------------------|----------------------|------------------------|
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_cathedral.jpg.jpg )     | (12, 3)              | (5, 2)                 |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_church.tif.jpg )        | (58, -4)             | (25, 4)                |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_emir.tif.jpg )          | (106, 42)            | (49, 24)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_harvesters.tif.jpg )    | (123,13)             | (60, 17)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_icon.tif.jpg )          | (89, 23)             | (40, 17)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_melons.tif.jpg )        | (177, 13)            | (80, 10)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_monastery.jpg.jpg )     | (3, 2)               | (-3, 2)                |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_onion_church.tif.jpg )  | (108, 36)            | (51, 27)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_sculpture.tif.jpg )     | (140, -27)           | (33, -11)              |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_self_portrait.tif.jpg ) | (175, 37)            | (79, 30)               |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_tobolsk.jpg.jpg )       | (7, 3)               | (3, 3)                 |
+| ![emir_good]({{site.baseurl}}/assets/project1/output/out_train.tif.jpg )         | (86, 33)             | (42, 8)                |
 
 For `three_generations.tif`, I found that aligning both red and blue to green works better so here is the displacement:
 
