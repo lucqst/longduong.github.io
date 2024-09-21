@@ -1,0 +1,125 @@
+---
+layout: post
+title:  "Project 2: Frequencies"
+date:   2024-09-18 10:30:10 -0700
+categories: jekyll update
+---
+{% include mathjax.html %}
+$$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
+
+## 1. Fun with Filters.
+# 1.1 Finite Difference Operator
+
+Convolving the image with $D_x$ and $D_y$ yields the following images:
+
+| $dx$      | $dy$ |
+|:---------:|:----:|
+| ![dx]({{site.baseurl}}/assets/proj2/dx.png) |  ![dx]({{site.baseurl}}/assets/proj2/dy.png)   |
+
+We compute the gradient magnitude by $\sqrt{dx^{2} + dy^{2}}$, which gives 
+![dx]({{site.baseurl}}/assets/proj2/grad.png)
+
+To pick an appropriate threshold for binarization, we look at the histogram of the gradient intensity:
+![dx]({{site.baseurl}}/assets/proj2/hist.png)
+
+From the graph, we see setting a threshold greater than about 0.3 will exclude a lot of noises. So the binarized image ends up being `grad > 0.3`, which looks like:
+
+![dx]({{site.baseurl}}/assets/proj2/camera_man_binarized.png)
+
+# 1.2 Derivative of Gaussian (DoG).
+
+To get a better binarized image, we'll first filter out the higher frequencies by convolving the image with a Gaussian filter. This gives: 
+
+![dx]({{site.baseurl}}/assets/proj2/gaussed.png)
+
+Taking the derivatives as the previous part yields:
+
+| $dx$      | $dy$ |
+|:---------:|:----:|
+| ![dx]({{site.baseurl}}/assets/proj2/gaussed_dx.png) |  ![dx]({{site.baseurl}}/assets/proj2/gaussed_dy.png)   |
+
+The corresponding gradient magnitude is then:
+
+![dx]({{site.baseurl}}/assets/proj2/gaussed_grad.png)
+
+The edges look more pronounced and there is less noise than the previous part. We can similarly perform binarization to further reduce noise and highlight the relevant edges. So `grad > 0.07` gives us:
+
+![dx]({{site.baseurl}}/assets/proj2/gaussed_grad_binarized.png)
+
+Since convolution is associative, we can convolve the image with the *the derivative of the Gaussian instead*. Mathematically, this means $(im * G) * D_x = im * (G * D_x)$. The derivatives of the Gaussian filter look as follows:
+
+| $G * D_x$      | $G * D_y$ |
+|:---------:|:----:|
+| ![dx]({{site.baseurl}}/assets/proj2/gauss_filter_dx.png) |  ![dx]({{site.baseurl}}/assets/proj2/gauss_filter_dy.png)   |
+
+Convolving the image directly with this *derivative of Gaussian* and perform binarization gives us the same result:
+
+![dx]({{site.baseurl}}/assets/proj2/gauss_dog_binarized.png)
+
+## 2. Fun with Frequencies.
+
+# 2.1 Image Sharpening.
+
+We'll try to achieve image sharpening by amplifying the higher frequencies. To do this, we convolve the image with a *sharpening* filter that amplifies the higher frequencies by a factor of $\alpha$. Mathematically, we want $im + \alpha(im - im * G) = im * e + \alpha\cdot im * e - \alpha\cdot im * G = im * ((1 + \alpha)e - \alpha \cdot G)$.
+
+Here's a sample of the sharpening filter that we've just derived. Notice the very slight depression in value around the peak!
+
+![dx]({{site.baseurl}}/assets/proj2/sharpening_filter.png)
+
+Convolving `taj.jpg` with said filter gives as the desired sharpening effect:
+
+| Before      | After |
+|:---------:|:----:|
+|![dx]({{site.baseurl}}/assets/proj2/taj.png) | ![dx]({{site.baseurl}}/assets/proj2/sharpened_taj_1.png) | 
+
+Here's the sharpening effect on a photo of Maria Callas performing *Medea* with $\alpha=5.0$. We can finally see her glorious rage in 4k. 
+
+| Before                                                | After                                                     |
+|:-----------------------------------------------------:|:---------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj2/callas_medea) | ![dx]({{site.baseurl}}/assets/proj2/callas_sharpened.png) |
+
+Now we sharpen the image `taj`, blur, then sharpen again. We can see that sharpening again doesn't bring back all the details the original sharpened image had. This means bluring and sharpening are neither lossless processes nor inverses of one another.
+
+![dx]({{site.baseurl}}/assets/proj2/blur_then_sharpen)
+
+# 2.2 Hybrid Images.
+
+| Mona Lisa                                                | Salvator Mundi                                                     |
+|:-----------------------------------------------------:|:---------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj2/mona.webp) | ![dx]({{site.baseurl}}/assets/proj2/salvator.jpg) |
+
+
+To illustrate, let's blend the *Mona Lisa* and the *Salvator Mundi* (both famous paintings from Leonardo da Vinci). First, we'll high-pass filter the Mona Lisa. We can do that by convolving Lisa with $e - G$ where $e$ is the unit impulse and $G$ is the low-pass Gaussian.
+
+Here's the highpass version of *Mona Lisa*, with the Fourier Magnitudes before and after the highpass filtering:
+
+![dx]({{site.baseurl}}/assets/proj2/highpass_lisa)
+
+Next, we need to lowpass filter the *Salvator Mundi*. This is done by simply convolving the *Mundi* with a Gaussian. Here's the lowpass *Mundi*, with the Fourier Magnitudes before and after. Notice how lowpass filtering attenuates the Fourier magnitudes at the corners.
+
+![dx]({{site.baseurl}}/assets/proj2/lowpass_mundi)
+
+To accentuate the effect, we choose to preserve color at the higher frequencies. After converting *Mundi* to greyscale and combine with *Lisa* we get: 
+
+![dx]({{site.baseurl}}/assets/proj2/mona_salvator)
+
+Here's another hybrid image of a Mozart portrait and a Lady holding an Ermine:
+
+| Mozart                                          | Ermine Lady                                        | Combined                                           |
+|:-----------------------------------------------:|:--------------------------------------------------:|----------------------------------------------------|
+| ![dx]({{site.baseurl}}/assets/proj2/mozart.jpg) | ![dx]({{site.baseurl}}/assets/proj2/goatlady.webp) | ![dx]({{site.baseurl}}/assets/proj2/lady_mozart) |
+|                                                 |                                                    |                                                    |
+
+
+Lastly, here's a hybrid of *Maleficent* and *Merryweather* (both from *Sleeping Beauty*). Notice the use of color at the high frequencies!
+
+| Maleficent                                      | Merryweather                                       | Combined                                         |
+|:-----------------------------------------------:|:--------------------------------------------------:|--------------------------------------------------|
+| ![dx]({{site.baseurl}}/assets/proj2/maleficent.jpeg) | ![dx]({{site.baseurl}}/assets/proj2/merryweather.webp) | ![dx]({{site.baseurl}}/assets/proj2/maleficent_merry) |
+|                                                 |                                                    |                                                  |
+
+# 2.3 Laplacian Pyramid
+
+A *Laplacian Pyramid* is a sequence of bandpass images constructed from the original image $I$ that captures high to low band of frequencies. Let $G_0 = I$ and $G_i = SubsampleBy2(GaussianFilter(G_{i-1}))$. Let $L_i = G_i - UpsampleBy2(G_{i-1})$. We call the sequence $L_i$ the Laplacian pyramid. At the lowest level, we simply let $L_N = G_N$. This allows us to write the following formula for the reconstruction of the original image: $G_0 = I = \sum_{k=0}^{N} L_k$. 
+
+![dx]({{site.baseurl}}/assets/proj2/laplacian_stack)
