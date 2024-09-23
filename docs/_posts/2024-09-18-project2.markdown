@@ -10,13 +10,13 @@ $$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
 ## 1. Fun with Filters.
 # 1.1 Finite Difference Operator
 
-Convolving the image with $D_x$ and $D_y$ yields the following images:
+To compute the gradient image $\frac{\partial im}{\partial x}$ and $\frac{\partial im}{\partial y}$, we convolve the image with $D_x$ and $D_y$:
 
 | $dx$      | $dy$ |
 |:---------:|:----:|
 | ![dx]({{site.baseurl}}/assets/proj2/dx.png) |  ![dx]({{site.baseurl}}/assets/proj2/dy.png)   |
 
-We compute the gradient magnitude by $\sqrt{dx^{2} + dy^{2}}$, which gives 
+We compute the gradient magnitude by $\sqrt{\frac{\partial im}{\partial x}^{2} + \frac{\partial im}{\partial y}^{2}}$, which gives 
 ![dx]({{site.baseurl}}/assets/proj2/grad.png)
 
 To pick an appropriate threshold for binarization, we look at the histogram of the gradient intensity:
@@ -111,7 +111,7 @@ Here's another hybrid image of a Mozart portrait and a Lady holding an Ermine:
 |                                                 |                                                    |                                                    |
 
 
-Lastly, here's a hybrid of *Maleficent* and *Merryweather* (both from *Sleeping Beauty*). Notice the use of color at the high frequencies!
+Lastly, here's a hybrid of *Maleficent* and *Merryweather* (both from *Sleeping Beauty*). Notice the use of color at the high frequencies! Despite that, this example doesn't work super well because the two characters are too different.
 
 | Maleficent                                      | Merryweather                                       | Combined                                         |
 |:-----------------------------------------------:|:--------------------------------------------------:|--------------------------------------------------|
@@ -120,6 +120,33 @@ Lastly, here's a hybrid of *Maleficent* and *Merryweather* (both from *Sleeping 
 
 # 2.3 Laplacian Pyramid
 
-A *Laplacian Pyramid* is a sequence of bandpass images constructed from the original image $I$ that captures high to low band of frequencies. Let $G_0 = I$ and $G_i = SubsampleBy2(GaussianFilter(G_{i-1}))$. Let $L_i = G_i - UpsampleBy2(G_{i-1})$. We call the sequence $L_i$ the Laplacian pyramid. At the lowest level, we simply let $L_N = G_N$. This allows us to write the following formula for the reconstruction of the original image: $G_0 = I = \sum_{k=0}^{N} L_k$. 
+A *Laplacian Pyramid* is a sequence of bandpass images constructed from the original image $I$ that captures high to low band of frequencies. Let $G_0 = I$ and $G_i = SubsampleBy2(GaussianFilter(G_{i-1}))$. Let $L_i = G_i - UpsampleBy2(G_{i-1})$. We call the sequence $L_i$ the Laplacian pyramid. At the lowest level, we simply let $L_N = G_N$. This allows us to write the following formula for the reconstruction of the original image (i.e. "collapsing" the pyramid): $G_0 = I = \sum_{k=0}^{N} L_k$. 
+
+To spline two images, we introduce a weighting function called `region`, which looks like this: 
+![dx]({{site.baseurl}}/assets/proj2/region)
+
+Let $L_i^{A}$ and $L_i^{B}$ be the Laplacian pyramid for the apple and orange image respectively. Let $G_k$ be the Gaussian pyramid for the `region` image. To spline together `apple` and `orange`, we simply construct a third Laplacian pyramid $L_k^{S} = G_k \cdot L_k^{A} + (1 - G_k) \cdot L_k^{B}$, then collapse the "spline" Laplacian pyramid to retrieve our spline image. 
+
+In the following picture, each row represents 3 terms from each level of the Laplacian pyramid: $G_i\cdot L_i^{A}$, $(1 - G_i)\cdot L_i^{B}$, and $L_k^{S}$. The last image shows the result when collapsing our Laplacian pyramid.
 
 ![dx]({{site.baseurl}}/assets/proj2/laplacian_stack)
+
+# 2.4 Laplacian Pyramid
+
+For an application of splining, let's spline together a portrait or Kamala Harris and Donald Trump.
+
+| Kamala Harris                                        | Donald Trump                                           | Combined                                              |
+|:----------------------------------------------------:|:------------------------------------------------------:|-------------------------------------------------------|
+| ![dx]({{site.baseurl}}/assets/proj2/kamala.jpg) | ![dx]({{site.baseurl}}/assets/proj2/trump.jpg) | ![dx]({{site.baseurl}}/assets/proj2/kamala_trump) |
+|                                                      |                                                        |                                                       |
+
+We can also do this with an irregular `region` function. For example, with this `region` mask, we can spline together the *Mona Lisa* and *John The Baptist* by Leonardo da Vinci.
+
+<img src="{{site.baseurl}}/assets/proj2/mona_john_mask.jpg" alt="drawing" width="200"/>
+
+
+| Mona Lisa                                      | John The Baptist                                     | Combined                                           |
+|:----------------------------------------------:|:----------------------------------------------------:|----------------------------------------------------|
+| ![dx]({{site.baseurl}}/assets/proj2/mona.webp) | ![dx]({{site.baseurl}}/assets/proj2/johnbaptist.jpg) | ![dx]({{site.baseurl}}/assets/proj2/mona_and_john) |
+|                                                |                                                      |                                                    |
+
