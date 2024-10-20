@@ -1,0 +1,97 @@
+---
+layout: post
+title:  "Project 4: Mosaic"
+date:   2024-09-18 10:30:10 -0700
+categories: jekyll update
+---
+{% include mathjax.html %}
+$$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
+
+
+## Part 1: Rectification
+
+In this part, we'll rectify a painting within another painting. Consider the following painting:
+
+![dx]({{site.baseurl}}/assets/proj4/classical_before)
+
+Suppose we now want to retrieve a more frontal view of the sub-painting on the bottom right. To do this, we'll need to compute a projective transformation of the 4 key points (appeared as red circles in the picture) such that in the post-transform version, those 4 points appear as a rectangle. 
+
+# Fact: The point $(x, y, z)$ and its projective-transformed version $(x', y', z')$ are related in the following way, where $w$ is a constant.
+
+$$ \begin{bmatrix}
+    a & b & c \\
+    d & e & f \\
+    g & h & 1
+    \end{bmatrix}
+    \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}
+    =
+    \begin{bmatrix} wx' \\ wy' \\ w \end{bmatrix} $$
+	
+We can then rewrite the equations as follows so that the unknowns are the coefficient of the matrix:
+
+$$ \begin{align*}
+\begin{cases}
+ax + by + c = wx' \\
+dx + ey + f = wy' \\
+gx + hy + 1 = w
+\end{cases}
+\\
+\implies
+\begin{cases}
+ax + by + c = (gx + hy + 1) x' \\
+dx + ey + f = (gx + hy + 1) y'
+\end{cases}
+\\
+\implies
+\begin{cases}
+ax + by + c - gxx' - hyx' = x' \\
+dx + ey + f - gxy' - hyy' = y'
+\end{cases}
+\\
+\implies
+\begin{bmatrix}
+x & y & 1 & 0 & 0 & 0 & -xx' & -yx' \\
+0 & 0 & 0 & x & y & 1 & -xy' & -yy' \\
+\end{bmatrix}
+\begin{bmatrix} a \\ b \\ c \\ d \\ e \\ f \\ g \\ h \end{bmatrix}
+=
+\begin{bmatrix} x' \\ y' \end{bmatrix}
+\end{align*} $$
+
+Notice we can stack multiple correspondences $(x, y), (x', y')$ by simply extending the LHS matrix and the RHS column vector. Since there could be more correspondences than unknowns, we'll simply use least squares to find the best fit.
+
+We can then use inverse warping to find the resulting rectification. Doing that for the image above gives:
+
+![dx]({{site.baseurl}}/assets/proj4/classical_after)
+
+Here's the result of rectifying the skull in "The Ambassadors":
+
+![dx]({{site.baseurl}}/assets/proj4/ambassadors.jpg)
+
+![dx]({{site.baseurl}}/assets/proj4/skull)
+
+
+## Part 2: Mosaic
+
+Suppose now we have two images taken from the same center-of-projection and we'd like to fuse them together.
+
+| Left                                                | Right                                              |
+|:-----------------------------------------------------:|:-----------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/1.jpg) | ![dx]({{site.baseurl}}/assets/proj4/2.jpg) |
+
+We'd first need to define some correspondences:
+
+| Left                                                | Right                                              |
+|:-----------------------------------------------------:|:-----------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/1_c) | ![dx]({{site.baseurl}}/assets/proj4/2_c) |
+
+Now we'll just need to compute the homography that would transform the point cloud in the right image to the point cloud in the left image. Here's what the projectively-transformed 2nd image looks like:
+
+| Left                                                | Right                                              |
+|:-----------------------------------------------------:|:-----------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/1_s) | ![dx]({{site.baseurl}}/assets/proj4/2_s) |
+
+
+Finally, we just need to blend them together, which results in:
+
+![dx]({{site.baseurl}}/assets/proj4/1_2_.jpg)

@@ -1,0 +1,10 @@
+---
+layout: post
+title:  "Project 3: Face Morphing"
+date:   2024-09-18 10:30:10 -0700
+categories: jekyll update
+---
+{% include mathjax.html %}
+$$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
+
+## Part 1:
