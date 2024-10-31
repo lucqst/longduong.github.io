@@ -95,3 +95,48 @@ Now we'll just need to compute the homography that would transform the point clo
 Finally, we just need to blend them together, which results in:
 
 ![dx]({{site.baseurl}}/assets/proj4/1_2_.jpg)
+
+# Part 3: Auto-Mosaic
+
+To automate this process, we'll first need to do feature detection. To that end, we'll use the Harris corner detector on our original picture:
+
+| UnFeatured                                      | Featured                                      |
+|:-----------------------------------------------:|:---------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/unfeatured) | ![dx]({{site.baseurl}}/assets/proj4/featured) |
+|                                                 |                                               |
+
+Since there are too many features to be computationally efficient, we'll remove some of them. If we simply take the points with the highest corner response, we'll get:
+
+![dx]({{site.baseurl}}/assets/proj4/highest_response)
+
+This is not desirable since the points might be highly concentrated in one area but *not* as concentrated in the region where two images overlap. To combat this, we'll use *Adaptive Non-Maximal Suppression*. This results in a more spread out point cloud. Here's an example of ANMS with radius of 10:
+
+![dx]({{site.baseurl}}/assets/proj4/anms)
+
+Now, we extract an 8-by-8 feature descriptor at each point-of-interest by supsampling (with anti-aliasing) from a 40-by-40 window. We also normalized the mean and standard variance of the image. 
+
+We then use a K-D Tree to implement nearest-neighbor matching. Using Lowe's trick with threshold set at 0.4, we found the following correspondences: 
+
+![dx]({{site.baseurl}}/assets/proj4/nn_cor)
+
+There are indeed good correspondences but it is clear from the picture that some outliers exist as well. To combat that, we'll run RANSAC. Setting epsilon at 2 (pixels) and do 1000 rounds of iterations, we arrived at the following:
+
+![dx]({{site.baseurl}}/assets/proj4/ransac_cor)
+
+It's clear that the bad outliers have been removed. Now, all that's left is to create a mosaic using our earlier function. Doing so gives something that's indistinguishably close to the mosaic obtained using manual correspondences:
+
+| Manual                                          | Automatic                                      |
+|:-----------------------------------------------:|:---------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/1_2_.jpg) | ![dx]({{site.baseurl}}/assets/proj4/1_2_auto.jpg) |
+|                                                 |                                               |
+
+Here are 2 more mosaics that were obtain through our automated system:
+
+| 1                                          | 2                                      |
+|:-----------------------------------------------:|:---------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj4/2_3_auto.jpg) | ![dx]({{site.baseurl}}/assets/proj4/3_4_auto.jpg) |
+|                                                 |                                               |
+
+# Lessons Learned:
+
+I would say the RANSAC algorithm was the most remarkable. After running RANSAC, I found correspondences that were just as good as manually labeled ones. Also, I also learned that sometimes, a convoluted passage in a research paper could be simply obscuring a relatively simpler idea.
