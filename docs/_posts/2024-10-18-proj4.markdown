@@ -132,10 +132,10 @@ It's clear that the bad outliers have been removed. Now, all that's left is to c
 
 Here are 2 more mosaics that were obtain through our automated system:
 
-| 1                                          | 2                                      |
-|:-----------------------------------------------:|:---------------------------------------------:|
-| ![dx]({{site.baseurl}}/assets/proj4/2_3_auto.jpg) | ![dx]({{site.baseurl}}/assets/proj4/3_4_auto.jpg) |
-|                                                 |                                               |
+| 1                                                 | 2                                                 | 3                                                 |
+|:-------------------------------------------------:|:-------------------------------------------------:|---------------------------------------------------|
+| ![dx]({{site.baseurl}}/assets/proj4/2.jpg) | ![dx]({{site.baseurl}}/assets/proj4/3.jpg) | ![dx]({{site.baseurl}}/assets/proj4/2_3_auto.jpg) |
+| ![dx]({{site.baseurl}}/assets/proj4/3.jpg) | ![dx]({{site.baseurl}}/assets/proj4/4.jpg) | ![dx]({{site.baseurl}}/assets/proj4/3_4_auto.jpg) |
 
 # Lessons Learned:
 
