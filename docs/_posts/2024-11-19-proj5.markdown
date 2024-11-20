@@ -1,0 +1,214 @@
+---
+layout: post
+title:  "Project 5: Fun with Diffusion"
+date:   2024-09-18 10:30:10 -0700
+categories: jekyll update
+---
+{% include mathjax.html %}
+$$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
+
+### Part A: Fun with Duffision.
+
+## Part 1: Sampling Loops
+
+# 1.1. Implementing the Forward Process
+
+A key part of diffusion is the forward process (i.e. introducing noise to an image). For this part, we take the image of the Berkeley Campanile and incrementally add noise to it using: 
+
+$$x_t = \sqrt{\bar\alpha_t} x_0 + \sqrt{1 - \bar\alpha_t} \epsilon
+          \quad \text{where}~ \epsilon \sim N(0, 1) $$ 
+
+Here are the results at noise levels [0, 250, 500, 750]:
+
+| Original                                            | 250                                                   | 500                                                   | 750                                                   |
+|:---------------------------------------------------:|:-----------------------------------------------------:|:-----------------------------------------------------:|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.1_noise0.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise250.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise500.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise750.png) |
+
+# 1.2 Classical Denoising.
+
+For comparison to later methods, we'll present the results of classical denoising using low-pass filter here:
+
+| 250                                                 | 500                                                   | 750                                                   |
+|:---------------------------------------------------:|:-----------------------------------------------------:|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.1_noise250.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise500.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise750.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.2_gauss250.png) | ![dx]({{site.baseurl}}/assets/proj5/1.2_gauss500.png) | ![dx]({{site.baseurl}}/assets/proj5/1.2_gauss750.png) |
+
+
+# 1.3 One-Step Denoising.
+
+For this part, we'll use a pretrained U-Net to denoise our image. Notice the results are much better despite a bit of unwanted hallucination at higher noise levels:
+
+| 250                                                 | 500                                                   | 750                                                   |
+|:---------------------------------------------------:|:-----------------------------------------------------:|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.1_noise250.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise500.png) | ![dx]({{site.baseurl}}/assets/proj5/1.1_noise750.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.3_onestep250.png) | ![dx]({{site.baseurl}}/assets/proj5/1.3_onestep500.png) | ![dx]({{site.baseurl}}/assets/proj5/1.3_onestep750.png) |
+
+# 1.4 Iterative Denoising
+
+To achieve better result, we apply UNet denoising multiple times. Here's the results at each timestep:
+
+![dx]({{site.baseurl}}/assets/proj5/1.4_iterdenoise_steps.png)
+
+For comparison, we include previous results here:
+
+| Gauss                                                 | OneStep                                                 | Iterative                                          |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.2_gauss750.png) | ![dx]({{site.baseurl}}/assets/proj5/1.3_onestep750.png) | ![dx]({{site.baseurl}}/assets/proj5/1.4_clean.png) |
+
+# 1.5 Diffusion Model Sample.
+
+To sample from the diffusion, we iteratively denoise *pure noise*. Here are 5 samples:
+
+| 1                                                | 2                                                | 3                                                | 4                                                | 5                                                |
+|:------------------------------------------------:|:------------------------------------------------:|:------------------------------------------------:|:--------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.5_im1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.5_im2.png) | ![dx]({{site.baseurl}}/assets/proj5/1.5_im3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.5_im4.png) | ![dx]({{site.baseurl}}/assets/proj5/1.5_im5.png) |
+
+# 1.6 CFG.
+
+To achieve better samples, we use a mix of conditional/unconditional sampling. Here are 5 samples with CFG scale of 7:
+
+| 1                                                | 2                                                | 3                                                | 4                                                | 5                                                |
+|:------------------------------------------------:|:------------------------------------------------:|:------------------------------------------------:|:--------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.6_im1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.6_im2.png) | ![dx]({{site.baseurl}}/assets/proj5/1.6_im3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.6_im4.png) | ![dx]({{site.baseurl}}/assets/proj5/1.6_im5.png) |
+
+
+# 1.7. Image2Image Translation.
+
+| i_start=1                                       | i_start=3                                       | i_start=5                                       | i_start=7                                       | i_start=10                                       | i_start=20                                       |
+|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:------------------------------------------------:|:------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.7_i1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7_i3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7_i5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7_i7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7_i10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7_i20.png) |
+
+
+# 1.7.1 Editing Hand-Drawn and Web Images.
+
+| i_start=1                                       | i_start=3                                       | i_start=5                                       | i_start=7                                       | i_start=10                                       | i_start=20                                       |
+|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:------------------------------------------------:|:------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i1_t20.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i2_t20.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.1_i3_t20.png) |
+
+# 1.7.2 Inpainting.
+
+| Original                                                 | Mask                                                 | Inpainting                                          |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i1_og.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i1_mask.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i1_in.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i2_og.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i2_mask.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.2_i2_in.png) |
+
+# 1.7.3 Text-Conditioning.
+
+| i_start=1                                       | i_start=3                                       | i_start=5                                       | i_start=7                                       | i_start=10                                       | i_start=20                                       |
+|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:-----------------------------------------------:|:------------------------------------------------:|:------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i1_t20.png) |
+| ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t3.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t5.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t7.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t10.png) | ![dx]({{site.baseurl}}/assets/proj5/1.7.3_i2_t20.png) |
+
+# 1.8. Visual Anagrams
+
+| Old man                                                 | Campfire                                                 |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram1_1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram1_2.png) | 
+
+
+| Old man                                                 | Barista                                                 |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram2_1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram2_2.png) | 
+
+| Old man                                                 | Dog                                                 |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram3_1.png) | ![dx]({{site.baseurl}}/assets/proj5/1.8_anagram3_2.png) | 
+
+# 1.9 Hybrid Images.
+
+| Hybrid of Skull and Waterfall       |
+|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.9_hybrid1.png) |
+
+| Hybrid of Skull and Dog       |
+|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.9_hybrid2.png) |
+
+| Hybrid of Skull and CampFire       |
+|:-----------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/1.9_hybrid3.png) |
+
+
+### Part B: Fun with Duffision.
+
+## Part 1: Training Single-Step Denoising UNet.
+
+# 1.2. Forward
+
+First, we add implement a forward (adding noise) process. Here's the result of adding increasing noise to the original image:
+
+![dx]({{site.baseurl}}/assets/proj5/b1.2_adding_noise.png)
+
+# 1.2.1 Training.
+
+Now, we train our UNet to denoise an image with noise level sigma=0.5 applied to it.
+
+Here's our loss curve:
+
+![dx]({{site.baseurl}}/assets/proj5/b1.2.1_loss_curve.png)
+
+and here's our results denoising at epoch 5:
+
+![dx]({{site.baseurl}}/assets/proj5/b1.2.1_epoch5_results.png)
+
+and at epoch 1:
+
+![dx]({{site.baseurl}}/assets/proj5/b1.2.1_epoch1_results.png)
+
+# 1.2.2 Out-of-Distribution Testing.
+
+We'll now try to apply our UNet on noise levels it wasn't trained for. Here are the results for noise levels [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0]:
+
+![dx]({{site.baseurl}}/assets/proj5/b1.2.2_out_dist_results.png)
+
+Notice the denoising quality gets progressively worse.
+
+## Part 2: Training a Diffusion Model.
+
+# 2.1 Time-Conditioning.
+
+We train our UNet now with time-conditioning. Here's the loss curve:
+
+![dx]({{site.baseurl}}/assets/proj5/time_conditioned_loss.png)
+
+Here's our results sampling from the time-conditioned UNet at certain epochs:
+
+| Epoch 5                                                                   | Epoch 20                                                                   |
+|:-------------------------------------------------------------------------:|:--------------------------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/time_conditioned_epoch5.png) | ![dx]({{site.baseurl}}/assets/proj5/time_conditioned_epoch20.png) |
+
+
+# 2.4 Class-Conditioning
+
+Now we train our UNet with class-conditioning (on top of time-conditioning). Here's the loss curve:
+
+![dx]({{site.baseurl}}/assets/proj5/class_conditioned_loss.png)
+
+Here's our results sampling from the class-conditioned UNet at certain epochs:
+
+| Epoch 5                                                                   | Epoch 20                                                                   |
+|:-------------------------------------------------------------------------:|:--------------------------------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep5_sample1) | ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep20_sample1) |
+| ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep5_sample2) | ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep20_sample2) |
+| ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep5_sample3) | ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep20_sample3) |
+| ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep5_sample4) | ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep20_sample4) |
+| ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep5_sample5) | ![dx]({{site.baseurl}}/assets/proj5/class_conditioned_ep20_sample5) |
+
+
+
+## Bells & Whistles
+
+Here's our gifs for time-conditioned UNet
+
+| Epoch 1                                                 | Epoch 5                                                 | Epoch 20                                          |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/2.1_time_conditioned_unet_epoch1.gif) | ![dx]({{site.baseurl}}/assets/proj5/2.1_time_conditioned_unet_epoch5.gif) | ![dx]({{site.baseurl}}/assets/proj5/2.1_time_conditioned_unet_epoch20.gif) |
+
+and class-conditioned UNet
+
+| Epoch 1                                                 | Epoch 5                                                 | Epoch 20                                          |
+|:-----------------------------------------------------:|:-------------------------------------------------------:|:--------------------------------------------------:|
+| ![dx]({{site.baseurl}}/assets/proj5/3.1_class_conditioned_unet_epoch1.gif) | ![dx]({{site.baseurl}}/assets/proj5/3.1_class_conditioned_unet_epoch5.gif) | ![dx]({{site.baseurl}}/assets/proj5/3.1_class_conditioned_unet_epoch20.gif) |
+
