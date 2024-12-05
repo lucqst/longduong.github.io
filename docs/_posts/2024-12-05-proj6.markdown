@@ -1,0 +1,127 @@
+---
+layout: post
+title:  "Project 6: Neural Radiance Field"
+date:   2024-09-18 10:30:10 -0700
+categories: jekyll update
+---
+{% include mathjax.html %}
+$$\newcommand{\norm}[1]{\left\lVert#1\right\rVert}$$
+
+# Part 1: Fit a Neural Field to a 2D Image.
+
+For this part, we create a neural network that takes a 2D coordinate as input and output an RGB value. We'll use this to model a function mapping the pixel coordinate of a picture and its RGB value. 
+
+Ultimately, we'd like for the network to remember this image:
+
+![dx]({{site.baseurl}}/assets/finalproj/fox.jpg)
+
+To enable the network to learn higher frequencies better, we'll use a sinusoidal positional encoding. In particular, we generate the following features from a single spatial coordinate:
+
+$$ PE(x) = \{x, sin(2^0\pi x), cos(2^0\pi x),
+        sin(2^1\pi x), cos(2^1\pi x), ..., sin(2^{L-1}\pi x), cos(2^{L-1}\pi x)\}  $$
+		
+where $$L$$ is the highest frequency value.
+
+We use the architecture recommeneded:
+
+![dx]({{site.baseurl}}/assets/finalproj/arch_part1.jpg)
+
+Optimizing the network with a 10k batch size for 3000 iterations with the Adam optimizer (learning rate = 1e-3), we observe the following loss and PSNR curve.
+
+![dx]({{site.baseurl}}/assets/finalproj/fox_loss)
+
+Here are some reconstructions at various iterations:
+
+At iteration=20
+![dx]({{site.baseurl}}/assets/finalproj/fox_e20)
+
+at iteration=100
+![dx]({{site.baseurl}}/assets/finalproj/fox_e100)
+
+at iteration=500
+![dx]({{site.baseurl}}/assets/finalproj/fox_e500)
+
+and at iteration=1500
+![dx]({{site.baseurl}}/assets/finalproj/fox_e1500)
+
+We also tried to increase the length of the positional encoding to see if our network could learn finer details better. There was not a perceptible difference:
+
+With L = 10
+![dx]({{site.baseurl}}/assets/finalproj/fox_e3000)
+
+With L = 30
+![dx]({{site.baseurl}}/assets/finalproj/fox_with_more_pe)
+
+
+We try the same procedure with an image of Maria Callas (L=30, Adam optimizer with lr=1e-3) during her Medea performance.
+
+Original: ![dx]({{site.baseurl}}/assets/finalproj/callas.jpg)
+
+Reconstruction at it=100: ![dx]({{site.baseurl}}/assets/finalproj/callas_100)
+
+Reconstruction at it=300: ![dx]({{site.baseurl}}/assets/finalproj/callas_300)
+
+Reconstruction at it=1500: ![dx]({{site.baseurl}}/assets/finalproj/callas_1500)
+
+Reconstruction at it=3000: ![dx]({{site.baseurl}}/assets/finalproj/callas_reconstruction)
+
+Loss (log-scale): ![dx]({{site.baseurl}}/assets/finalproj/callas_loss)
+
+PSNR:  ![dx]({{site.baseurl}}/assets/finalproj/callas_psnr)
+
+# Part 2: NeRF
+
+To convert fom a camera coordinate $x_c$ to world coordinate $x_w$ we simply perform a multiplication with the $c2w$ matrix. To convert from pixel $(u, v)$ to camera coordinate, we simply multiply both sides of the following equation with $K^{-1}$
+
+
+$$\begin{align} s \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{K} \begin{bmatrix} x_c \\ y_c \\ z_c \end{bmatrix} \end{align}$$
+
+To convert from a pixel $(u, v)$ to a ray going from the camera's COP to said pixel, we first compute the camera origin with $\begin{align} r_o =
+      -\mathbf{R}_{3\times3}^{-1}\mathbf{t} \end{align}$ where $\mathbf{t}$ is the 3x1 last column of the c2w matrix. Then the direction vector is: $\begin{align} \mathbf{r}_d = \frac{\mathbf{X_w} - \mathbf{r}_o}{||\mathbf{X_w} -
+      \mathbf{r}_o||_2} \end{align}$ where $\mathbf{X}_w$ is the point (in world coordinate) at depth s=1 from the camera.
+
+To sample N rays from the dataset, we chose to sample $N / DatasetSize$ rays from each image. To calculate the world coordinates of the sapmle points along each ray, we simply use the equation $\mathbf{x} = \mathbf{R}_o + \mathbf{R}_d * t$. We also add some noise to $t$ to prevent overfitting.
+
+Here's a visualization of our sampling rays:
+![dx]({{site.baseurl}}/assets/finalproj/sampling_rays.jpg)
+
+Here's our network architecture:
+![dx]({{site.baseurl}}/assets/finalproj/part2_arch.png)
+
+We used $L=10$ for $x$ and $L=4$ for $r_d$. We trained for 8000 iterations with Adam optimizer (lr=5e-4), n_samples=192 and was able to achieve an PSNR between 23 and 24.
+
+Here are the validation PSNR and Loss curve:
+
+![dx]({{site.baseurl}}/assets/finalproj/psnr_curve)
+![dx]({{site.baseurl}}/assets/finalproj/loss_curve)
+
+Here are a few samples along the trainig process (the right is the reference picture):
+
+![dx]({{site.baseurl}}/assets/finalproj/1)
+![dx]({{site.baseurl}}/assets/finalproj/2)
+![dx]({{site.baseurl}}/assets/finalproj/3)
+![dx]({{site.baseurl}}/assets/finalproj/4)
+![dx]({{site.baseurl}}/assets/finalproj/5)
+
+Here are the comparisons between the validation picture and our reconstruction at 8000 iterations:
+
+![dx]({{site.baseurl}}/assets/finalproj/validation_comparisons)
+
+Here are some frames in the rotating gif:
+
+![dx]({{site.baseurl}}/assets/finalproj/truck-frame40.png) 
+![dx]({{site.baseurl}}/assets/finalproj/truck-frame46.png)
+![dx]({{site.baseurl}}/assets/finalproj/truck-frame52.png)
+
+Here's a gif:
+
+![dx]({{site.baseurl}}/assets/finalproj/rotating.gif)
+
+# Bells & Whistles
+
+For B&W, we altered the volrend function to yield a different background:
+
+![dx]({{site.baseurl}}/assets/finalproj/teal_background)
+![dx]({{site.baseurl}}/assets/finalproj/red_background)
+
+To achieve this, we first identified the pixels whose rays contain samples that are all identically black. Once we've identified the background pixels, we simply assign one of the sample point our desired background color and proceed as before.
