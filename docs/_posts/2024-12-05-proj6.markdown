@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Project 6: Neural Radiance Field"
-date:   2024-09-18 10:30:10 -0700
+date:   2024-12-05 10:30:10 -0700
 categories: jekyll update
 ---
 {% include mathjax.html %}
